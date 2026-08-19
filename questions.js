@@ -23,14 +23,6 @@ const questions = [
     ]
   },
   {
-    q: "Who's coming with you?",
-    key: 'company',
-    options: [
-      { label: 'Going alone', value: 'solo' },
-      { label: 'With friends', value: 'friends' }
-    ]
-  },
-  {
     q: 'How far are you willing to go?',
     key: 'distance',
     options: [

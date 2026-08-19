@@ -35,7 +35,6 @@ function formatPrice(avgSEK) {
 }
 
 async function fetchRate(code) {
-  // Try provider 1: open.er-api.com (all currencies, no key)
   try {
     const res = await fetch('https://open.er-api.com/v6/latest/SEK');
     if (res.ok) {
@@ -45,11 +44,8 @@ async function fetchRate(code) {
         return true;
       }
     }
-  } catch (e) {
-    /* try next provider */
-  }
+  } catch (e) {}
 
-  // Try provider 2: Frankfurter (ECB-backed, no key, covers major currencies)
   try {
     const res2 = await fetch(
       `https://api.frankfurter.app/latest?from=SEK&to=${code}`
@@ -61,9 +57,7 @@ async function fetchRate(code) {
         return true;
       }
     }
-  } catch (e) {
-    /* both failed */
-  }
+  } catch (e) {}
 
   return false;
 }
@@ -188,7 +182,7 @@ function renderIntro() {
   card.innerHTML = `
     <div class="qnum">Welcome</div>
     <div class="question">Find your next Skåne adventure</div>
-    <p class="sub" style="margin-bottom:22px;">Answer 5 quick questions about the kind of day you're after, and get a few solid picks from the Skåne bucket list — beaches, hikes, castles, food, and more — with a rough idea of what they'll cost.</p>
+    <p class="sub" style="margin-bottom:22px;">Answer 4 quick questions about the kind of day you're after, and get a few solid picks from the Skåne bucket list — beaches, hikes, castles, food, and more — with a rough idea of what they'll cost.</p>
     <div class="options">
       <button class="opt" id="startBtn">Let's go →</button>
     </div>
@@ -239,24 +233,12 @@ function buildResults() {
   let primary = places[mood] ? [...places[mood]] : [];
   const count = pickCount();
 
-  // Budget preference: if keeping it cheap, favor low-cost picks first;
-  // if flexible, no filtering needed since flex covers everything.
   if (answers.budget === 'low') {
     primary.sort(
       (a, b) => (a.cost === 'low' ? 0 : 1) - (b.cost === 'low' ? 0 : 1)
     );
   }
 
-  // When someone is going alone, prefer activities marked as solo-friendly.
-  if (answers.company === 'solo' && mood !== 'alone') {
-    primary.sort(
-      (a, b) =>
-        (a.categories.includes('alone') ? 0 : 1) -
-        (b.categories.includes('alone') ? 0 : 1)
-    );
-  }
-
-  // If no options or not a lot are found, shows some near-by options
   let extra = [];
   if (primary.length < count) {
     extra = sights.filter((sight) => !sight.categories.includes(mood));
