@@ -128,7 +128,6 @@ h1 {
   padding: 32px 28px;
   box-shadow: 0 12px 32px rgba(0, 61, 99, 0.08);
   overflow: hidden;
-  /* Transition für fließendes Einklappen von Höhe & Padding */
   transition:
     height 0.22s cubic-bezier(0.4, 0, 0.2, 1),
     padding 0.22s cubic-bezier(0.4, 0, 0.2, 1),
@@ -141,7 +140,6 @@ h1 {
     transform 0.18s ease-out;
 }
 
-/* Zustand während des Einklappens zum Balken */
 .card.is-collapsed {
   height: 10px !important;
   padding-top: 0 !important;
@@ -151,10 +149,10 @@ h1 {
 
 .card.is-collapsed .card-inner {
   opacity: 0;
-  transform: translateY(-12px); /* Wandert optisch nach oben weg */
+  transform: translateY(-12px);
 }
 
-/* Schwedische Akzentleiste am oberen Rand der Karte */
+/* Schwedische Akzentleiste */
 .card::before {
   content: '';
   position: absolute;
@@ -432,21 +430,40 @@ h1 {
   cursor: pointer;
 }
 
-.all-list .group-title {
-  font-family: 'Fraunces', serif;
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--sweden-blue-dark);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  margin: 24px 0 10px 0;
-  padding-bottom: 4px;
-  border-bottom: 3px solid var(--sweden-yellow);
-  display: inline-block;
+/* Accordion Style für Kategorien */
+.category-group {
+  margin-bottom: 10px;
 }
 
-.all-list .group-title:first-child {
-  margin-top: 0;
+.group-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--sweden-blue-light);
+  border: 1.5px solid var(--border-color);
+  padding: 12px 18px;
+  border-radius: 12px;
+  font-family: 'Fraunces', serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--sweden-blue-dark);
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 0.15s ease;
+}
+
+.group-header:hover {
+  background: var(--sweden-blue-hover);
+}
+
+.chevron {
+  font-size: 12px;
+  color: var(--sweden-blue);
+}
+
+.group-content {
+  padding-top: 8px;
 }
 
 .app-footer {

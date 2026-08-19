@@ -356,8 +356,15 @@ function renderAllActivities() {
       ${groupOrder
         .map(
           (key) => `
-        <div class="group-title">${groupTitles[key]}</div>
-        ${places[key].map(resultItemHTML).join('')}
+        <div class="category-group">
+          <button class="group-header" data-key="${key}">
+            <span>${groupTitles[key]} (${places[key] ? places[key].length : 0})</span>
+            <span class="chevron">►</span>
+          </button>
+          <div class="group-content" id="group-${key}" style="display: none;">
+            ${places[key] ? places[key].map(resultItemHTML).join('') : ''}
+          </div>
+        </div>
       `
         )
         .join('')}
@@ -368,6 +375,17 @@ function renderAllActivities() {
       </div>
     </div>
   `;
+
+  card.querySelectorAll('.group-header').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const content = card.querySelector(`#group-${btn.dataset.key}`);
+      const chevron = btn.querySelector('.chevron');
+      const isHidden = content.style.display === 'none';
+      content.style.display = isHidden ? 'block' : 'none';
+      chevron.textContent = isHidden ? '▼' : '►';
+    });
+  });
+
   document.getElementById('restart2').addEventListener('click', resetAll);
   document.getElementById('backToResults').addEventListener('click', () => {
     screen = 'results';
