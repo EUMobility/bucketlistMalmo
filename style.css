@@ -33,7 +33,7 @@ body {
   padding: 0;
 }
 
-/* Dynamischer, animierter Hintergrund (Blau bis Gelb) */
+/* Dynamischer, animierter Hintergrund */
 body {
   background: linear-gradient(-45deg, #cde2f5, #e6f0fa, #fef3c7, #fde68a);
   background-size: 400% 400%;
@@ -43,12 +43,11 @@ body {
   min-height: 100vh;
   min-height: 100dvh;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
-  padding: 24px 14px;
+  padding: max(32px, 5vh) 14px 40px;
 }
 
-/* Sanfte Wellenbewegung des Verlaufs */
 @keyframes ambientGradient {
   0% {
     background-position: 0% 50%;
@@ -79,7 +78,6 @@ body {
   margin: 0 0 6px 0;
 }
 
-/* Schwedenflaggen-Badge im Kopfbereich */
 .eyebrow::before {
   content: '';
   display: inline-block;
@@ -121,7 +119,7 @@ h1 {
   line-height: 1.4;
 }
 
-/* Card Container */
+/* Card Container mit Falteffekt & Balken-Animation */
 .card {
   position: relative;
   background: var(--bg-card);
@@ -130,9 +128,33 @@ h1 {
   padding: 32px 28px;
   box-shadow: 0 12px 32px rgba(0, 61, 99, 0.08);
   overflow: hidden;
+  /* Transition für fließendes Einklappen von Höhe & Padding */
+  transition:
+    height 0.22s cubic-bezier(0.4, 0, 0.2, 1),
+    padding 0.22s cubic-bezier(0.4, 0, 0.2, 1),
+    border-radius 0.22s ease;
 }
 
-/* Akzentleiste oben an der Karte */
+.card-inner {
+  transition:
+    opacity 0.18s ease-out,
+    transform 0.18s ease-out;
+}
+
+/* Zustand während des Einklappens zum Balken */
+.card.is-collapsed {
+  height: 10px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  border-radius: 10px;
+}
+
+.card.is-collapsed .card-inner {
+  opacity: 0;
+  transform: translateY(-12px); /* Wandert optisch nach oben weg */
+}
+
+/* Schwedische Akzentleiste am oberen Rand der Karte */
 .card::before {
   content: '';
   position: absolute;
@@ -147,6 +169,7 @@ h1 {
     var(--sweden-yellow) 70%,
     var(--sweden-yellow) 100%
   );
+  z-index: 2;
 }
 
 .qnum {
@@ -167,7 +190,6 @@ h1 {
   line-height: 1.28;
 }
 
-/* Antwort-Optionen im Pill-Design */
 .options {
   display: flex;
   flex-direction: column;
@@ -189,7 +211,6 @@ h1 {
     transform 0.1s ease;
 }
 
-/* Option 1, 3, 5... (Blau-Tönung) */
 .opt:nth-child(odd) {
   background: var(--sweden-blue-light);
   border: 2px solid rgba(0, 98, 155, 0.25);
@@ -201,7 +222,6 @@ h1 {
   border-color: var(--sweden-blue);
 }
 
-/* Option 2, 4, 6... (Gelb-Tönung) */
 .opt:nth-child(even) {
   background: var(--sweden-yellow-light);
   border: 2px solid rgba(217, 171, 0, 0.35);
@@ -222,7 +242,6 @@ h1 {
   outline-offset: 2px;
 }
 
-/* Fortschrittsbalken */
 .progress-track {
   height: 8px;
   background: #e2e8f0;
@@ -236,6 +255,7 @@ h1 {
   background: var(--sweden-yellow);
   border-radius: 9999px;
   width: 0%;
+  transition: width 0.3s ease;
 }
 
 /* Results */
@@ -312,33 +332,36 @@ h1 {
   color: var(--text-muted);
   line-height: 1.45;
 }
+
 .category-tags {
   display: flex;
   flex-wrap: wrap;
   gap: 5px;
   margin-top: 7px;
 }
+
 .result-body .category-tags span {
   padding: 2px 7px;
   border-radius: 999px;
   background: rgba(27, 58, 75, 0.08);
-  color: var(--sea);
+  color: var(--sweden-blue-dark);
   font-size: 10px;
   font-weight: 600;
 }
+
 .result-body .result-link {
   display: inline-block;
   margin-top: 5px;
-  color: var(--sea);
+  color: var(--sweden-blue);
   font-size: 12px;
   font-weight: 600;
   text-decoration: none;
 }
+
 .result-body .result-link:hover {
   text-decoration: underline;
 }
 
-/* Buttons & Action Row */
 .action-row {
   display: flex;
   gap: 10px;
@@ -375,7 +398,6 @@ h1 {
   background: var(--sweden-yellow-dark);
 }
 
-/* Custom Currency Form */
 .custom-currency {
   display: flex;
   gap: 8px;
@@ -427,7 +449,6 @@ h1 {
   margin-top: 0;
 }
 
-/* Footer */
 .app-footer {
   margin-top: 32px;
   text-align: center;
