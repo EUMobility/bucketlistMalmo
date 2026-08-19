@@ -1,24 +1,27 @@
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600;700&display=swap');
 
 :root {
-  /* Schwedisches Farbkonzept */
-  --sweden-blue: #006aa7;
-  --sweden-blue-dark: #004b76;
-  --sweden-blue-light: #f0f7ff;
-  --sweden-yellow: #fecc00;
-  --sweden-yellow-dark: #e5b800;
-  --sweden-yellow-light: #fff8d6;
+  /* Schwedisches Farbkonzept – etwas gesättigter */
+  --sweden-blue: #00629b;
+  --sweden-blue-dark: #003d63;
+  --sweden-blue-light: #e6f2fc;
+  --sweden-blue-hover: #d2e7fb;
+
+  --sweden-yellow: #fecb00;
+  --sweden-yellow-dark: #d9ab00;
+  --sweden-yellow-light: #fffbe6;
+  --sweden-yellow-hover: #fff3b3;
 
   /* Ergänzende Akzentfarben */
   --grass: #2e7d32;
   --coral: #d32f2f;
 
   /* Oberflächen & Text */
-  --bg-page: #f0f4f8;
+  --bg-page: #dce7f2;
   --bg-card: #ffffff;
   --ink: #0f172a;
-  --text-muted: #475569;
-  --border-color: rgba(0, 106, 167, 0.12);
+  --text-muted: #334155;
+  --border-color: rgba(0, 98, 155, 0.2);
 }
 
 * {
@@ -31,8 +34,10 @@ body {
   padding: 0;
 }
 
+/* Satterer, professioneller Seitenhintergrund */
 body {
-  background: var(--bg-page);
+  background: linear-gradient(160deg, #e5eff8 0%, #d4e3f2 100%);
+  background-attachment: fixed;
   font-family: 'Work Sans', sans-serif;
   color: var(--ink);
   min-height: 100vh;
@@ -50,12 +55,41 @@ body {
 
 /* Header Bereich */
 .eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   font-size: 12px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--sweden-blue);
   font-weight: 700;
   margin: 0 0 6px 0;
+}
+
+/* Schwedenflaggen-Badge im Kopfbereich */
+.eyebrow::before {
+  content: '';
+  display: inline-block;
+  width: 16px;
+  height: 11px;
+  border-radius: 2px;
+  background-color: var(--sweden-blue);
+  background-image:
+    linear-gradient(
+      90deg,
+      transparent 30%,
+      var(--sweden-yellow) 30%,
+      var(--sweden-yellow) 50%,
+      transparent 50%
+    ),
+    linear-gradient(
+      0deg,
+      transparent 35%,
+      var(--sweden-yellow) 35%,
+      var(--sweden-yellow) 65%,
+      transparent 65%
+    );
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
 }
 
 h1 {
@@ -74,14 +108,32 @@ h1 {
   line-height: 1.4;
 }
 
-/* Card Container */
+/* Card Container mit doppeltem Farb-Header (Blau + Gelb) */
 .card {
+  position: relative;
   background: var(--bg-card);
   border: 1px solid var(--border-color);
-  border-top: 5px solid var(--sweden-blue);
   border-radius: 12px;
   padding: 28px 24px;
-  box-shadow: 0 10px 25px rgba(0, 75, 118, 0.06);
+  box-shadow: 0 12px 30px rgba(0, 61, 99, 0.1);
+  overflow: hidden;
+}
+
+/* Akzentleiste oben an der Karte */
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: linear-gradient(
+    to right,
+    var(--sweden-blue) 0%,
+    var(--sweden-blue) 70%,
+    var(--sweden-yellow) 70%,
+    var(--sweden-yellow) 100%
+  );
 }
 
 .qnum {
@@ -102,55 +154,55 @@ h1 {
   line-height: 1.28;
 }
 
-/* Antwort-Optionen Base */
+/* Antwort-Optionen mit sichtbarer Farbgrundierung */
 .options {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
 .opt {
   text-align: left;
-  background: #f8fafc;
-  border: 1.5px solid #e2e8f0;
   border-radius: 8px;
   padding: 14px 18px;
   font-family: 'Work Sans', sans-serif;
   font-size: 15px;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--ink);
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition:
+    background-color 0.12s ease,
+    border-color 0.12s ease;
 }
 
-/* Option 1, 3, 5... (Blau) */
+/* Option 1, 3, 5... (Blau-Tönung) */
 .opt:nth-child(odd) {
-  border-left: 4px solid var(--sweden-blue);
+  background: var(--sweden-blue-light);
+  border: 1.5px solid rgba(0, 98, 155, 0.2);
+  border-left: 5px solid var(--sweden-blue);
+  color: var(--sweden-blue-dark);
 }
 
 .opt:nth-child(odd):hover {
+  background: var(--sweden-blue-hover);
   border-color: var(--sweden-blue);
-  border-left-width: 6px;
-  background: var(--sweden-blue-light);
-  color: var(--sweden-blue-dark);
-  transform: translateX(2px);
 }
 
-/* Option 2, 4, 6... (Gelb) */
+/* Option 2, 4, 6... (Gelb-Tönung) */
 .opt:nth-child(even) {
-  border-left: 4px solid var(--sweden-yellow);
+  background: var(--sweden-yellow-light);
+  border: 1.5px solid rgba(217, 171, 0, 0.3);
+  border-left: 5px solid var(--sweden-yellow-dark);
+  color: #4a3b00;
 }
 
 .opt:nth-child(even):hover {
+  background: var(--sweden-yellow-hover);
   border-color: var(--sweden-yellow-dark);
-  border-left-width: 6px;
-  background: var(--sweden-yellow-light);
-  color: var(--sweden-blue-dark);
-  transform: translateX(2px);
 }
 
 .opt:active {
-  transform: scale(0.99);
+  transform: scale(0.995);
 }
 
 .opt:focus-visible {
@@ -158,10 +210,10 @@ h1 {
   outline-offset: 2px;
 }
 
-/* Fortschrittsbalken in Schwedengelb */
+/* Fortschrittsbalken */
 .progress-track {
-  height: 6px;
-  background: #e2e8f0;
+  height: 8px;
+  background: #cbd5e1;
   border-radius: 4px;
   margin-top: 26px;
   overflow: hidden;
@@ -171,7 +223,6 @@ h1 {
   height: 100%;
   background: var(--sweden-yellow);
   width: 0%;
-  transition: width 0.4s ease;
 }
 
 /* Results */
@@ -191,7 +242,7 @@ h1 {
   display: flex;
   gap: 16px;
   padding: 16px 0;
-  border-top: 1px solid #edf2f7;
+  border-top: 1px solid #e2e8f0;
 }
 
 .result-item:first-of-type {
@@ -207,6 +258,8 @@ h1 {
   letter-spacing: 0.08em;
   min-width: 110px;
   padding-top: 3px;
+  padding-left: 8px;
+  border-left: 3px solid var(--sweden-yellow);
 }
 
 .result-body strong {
@@ -257,34 +310,31 @@ h1 {
 
 .restart {
   background: var(--sweden-blue);
-  border: 1px solid var(--sweden-blue);
+  border: 1px solid var(--sweden-blue-dark);
   color: #ffffff;
   padding: 12px 20px;
   border-radius: 8px;
   font-family: 'Work Sans', sans-serif;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.15s ease;
-  box-shadow: 0 4px 12px rgba(0, 106, 167, 0.25);
+  transition: background-color 0.1s;
+  box-shadow: 0 4px 12px rgba(0, 98, 155, 0.25);
 }
 
 .restart:hover {
   background: var(--sweden-blue-dark);
-  border-color: var(--sweden-blue-dark);
-  transform: translateY(-1px);
 }
 
 .action-row .restart.secondary {
   background: var(--sweden-yellow);
-  border-color: var(--sweden-yellow);
+  border-color: var(--sweden-yellow-dark);
   color: var(--sweden-blue-dark);
-  box-shadow: 0 4px 12px rgba(254, 204, 0, 0.3);
+  box-shadow: 0 4px 12px rgba(254, 203, 0, 0.35);
 }
 
 .action-row .restart.secondary:hover {
   background: var(--sweden-yellow-dark);
-  border-color: var(--sweden-yellow-dark);
 }
 
 /* Custom Currency Form */
@@ -326,12 +376,12 @@ h1 {
   font-family: 'Fraunces', serif;
   font-size: 14px;
   font-weight: 700;
-  color: var(--sweden-blue);
+  color: var(--sweden-blue-dark);
   text-transform: uppercase;
   letter-spacing: 0.08em;
   margin: 24px 0 10px 0;
   padding-bottom: 4px;
-  border-bottom: 2px solid var(--sweden-yellow);
+  border-bottom: 3px solid var(--sweden-yellow);
   display: inline-block;
 }
 
@@ -348,19 +398,14 @@ h1 {
 .app-footer p {
   font-size: 12px;
   color: var(--text-muted);
-  opacity: 0.85;
+  opacity: 0.9;
   margin: 2px 0;
 }
 
 .app-footer a {
   color: var(--sweden-blue);
   text-decoration: underline;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .progress-fill {
-    transition: none;
-  }
+  font-weight: 500;
 }
 
 @media (max-width: 480px) {
