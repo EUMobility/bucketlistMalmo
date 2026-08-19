@@ -6,12 +6,11 @@ const questions = [
       { label: 'Relax by the water', value: 'coast' },
       { label: 'An active hike outdoors', value: 'nature' },
       { label: 'Castles and old history', value: 'culture' },
-      { label: 'City energy in Malmö', value: 'city' },
-      { label: 'An adrenaline rush', value: 'adventure' },
+      { label: 'Explore cities and towns', value: 'cities' },
+      { label: 'Fun adventures and games', value: 'fun' },
+      { label: "I'm alone and bored", value: 'alone' },
       { label: 'Food, markets and fika', value: 'food' },
-      { label: 'A charming small town', value: 'towns' },
       { label: 'A day trip somewhere new', value: 'daytrip' },
-      { label: 'A day exploring Copenhagen', value: 'copenhagen' },
     ],
   },
   {
@@ -49,307 +48,6 @@ const questions = [
     ],
   },
 ];
-
-const places = {
-  coast: [
-    {
-      tag: 'Coast',
-      name: 'Skanör sea bath',
-      note: 'Classic seaside dip, easygoing and close to town.',
-      cost: 'low',
-      avgSEK: 0,
-    },
-    {
-      tag: 'Coast',
-      name: 'Lomma beach',
-      note: 'Wide sandy stretch, good for a lazy afternoon.',
-      cost: 'low',
-      avgSEK: 0,
-    },
-    {
-      tag: 'Coast',
-      name: 'Hovs Hallar',
-      note: 'Dramatic cliffs and pebble coves for a walk by the sea.',
-      cost: 'low',
-      avgSEK: 0,
-    },
-    {
-      tag: 'Coast',
-      name: 'Kullaberg',
-      note: "Rocky headland with some of Skåne's best sea views.",
-      cost: 'low',
-      avgSEK: 0,
-    },
-    {
-      tag: 'Coast',
-      name: 'Sandhammaren beach',
-      note: "One of Sweden's best-loved stretches of soft white sand.",
-      cost: 'low',
-      avgSEK: 0,
-    },
-    {
-      tag: 'Coast',
-      name: 'Smygehuk',
-      note: "Sweden's southernmost point, with a lighthouse and open sea views.",
-      cost: 'low',
-      avgSEK: 0,
-    },
-  ],
-  nature: [
-    {
-      tag: 'Nature',
-      name: 'Söderåsen National Park',
-      note: 'Deep ravines and beech forest, great for a real hike.',
-      cost: 'low',
-      avgSEK: 0,
-    },
-    {
-      tag: 'Nature',
-      name: 'Stenshuvud National Park',
-      note: 'Coastal hill with mixed forest and beach views.',
-      cost: 'low',
-      avgSEK: 0,
-    },
-    {
-      tag: 'Nature',
-      name: 'Kullaberg nature reserve',
-      note: 'Trails along dramatic cliffside nature.',
-      cost: 'low',
-      avgSEK: 0,
-    },
-    {
-      tag: 'Nature',
-      name: 'Hovs Hallar',
-      note: 'Short scenic trails along a rocky shoreline.',
-      cost: 'low',
-      avgSEK: 0,
-    },
-    {
-      tag: 'Nature',
-      name: 'Naturum Vattenriket, Kristianstad',
-      note: 'Wetland nature reserve, good for birdlife and easy trails.',
-      cost: 'low',
-      avgSEK: 0,
-    },
-  ],
-  culture: [
-    {
-      tag: 'History',
-      name: 'Krapperup Castle',
-      note: 'Historic castle grounds and gardens to wander.',
-      cost: 'low',
-      avgSEK: 0,
-    },
-    {
-      tag: 'History',
-      name: 'Lund university area',
-      note: 'Old university town, cathedral and cobbled streets.',
-      cost: 'low',
-      avgSEK: 0,
-    },
-    {
-      tag: 'History',
-      name: 'Malmöhus Castle',
-      note: "Sweden's oldest surviving renaissance fortress, right in Malmö.",
-      cost: 'low',
-      avgSEK: 60,
-    },
-    {
-      tag: 'History',
-      name: "Ales stenar (Ale's Stones)",
-      note: 'A striking Iron Age stone-ship monument above the coast in Österlen.',
-      cost: 'low',
-      avgSEK: 0,
-    },
-    {
-      tag: 'History',
-      name: 'Foteviken Museum (Viking Reserve)',
-      note: 'Reconstructed Viking-age village you can walk through, near Höllviken.',
-      cost: 'flex',
-      avgSEK: 100,
-    },
-  ],
-  city: [
-    {
-      tag: 'Malmö',
-      name: 'Västra Hamnen & Turning Torso',
-      note: "Modern waterfront district with Sweden's tallest building.",
-      cost: 'low',
-      avgSEK: 0,
-    },
-    {
-      tag: 'Malmö',
-      name: 'Scaniaparken',
-      note: 'Relaxed city park, good for a stroll or a picnic.',
-      cost: 'low',
-      avgSEK: 0,
-    },
-    {
-      tag: 'Malmö',
-      name: 'Lilla Torg & Gamla Väster',
-      note: "Malmö's cobbled old town square, cafés and colourful houses.",
-      cost: 'low',
-      avgSEK: 0,
-    },
-    {
-      tag: 'Malmö',
-      name: 'Möllevångstorget',
-      note: 'Lively multicultural square with a market and street food.',
-      cost: 'low',
-      avgSEK: 0,
-    },
-  ],
-  adventure: [
-    {
-      tag: 'Adventure',
-      name: 'Multilevel zipline, Sandakra (near Hässleholm)',
-      note: 'Treetop zipline course for an adrenaline hit.',
-      cost: 'flex',
-      avgSEK: 499,
-    },
-  ],
-  food: [
-    {
-      tag: 'Food',
-      name: 'Lilla Torg food market, Malmö',
-      note: "Stalls and cafés on one of Malmö's prettiest squares.",
-      cost: 'flex',
-      avgSEK: 150,
-    },
-    {
-      tag: 'Food',
-      name: 'Fika in Gamla Väster',
-      note: "Coffee and cake in Malmö's oldest, coziest streets.",
-      cost: 'low',
-      avgSEK: 70,
-    },
-    {
-      tag: 'Food',
-      name: "Ystad's cafés and bakeries",
-      note: 'Small-town fika stops among cobblestones and flowers.',
-      cost: 'low',
-      avgSEK: 70,
-    },
-    {
-      tag: 'Food',
-      name: 'Kristianstad food scene',
-      note: 'Known for its chocolate, coffee spots and hearty dinners.',
-      cost: 'flex',
-      avgSEK: 150,
-    },
-  ],
-  towns: [
-    {
-      tag: 'Town',
-      name: 'Ystad old town',
-      note: 'Cobbled streets, half-timbered houses, famous as the Wallander town.',
-      cost: 'low',
-      avgSEK: 0,
-    },
-    {
-      tag: 'Town',
-      name: 'Simrishamn',
-      note: 'Quiet fishing town on the Österlen coast, good for a slow wander.',
-      cost: 'low',
-      avgSEK: 0,
-    },
-    {
-      tag: 'Town',
-      name: 'Åhus',
-      note: 'Classic Swedish summer resort town with a long sandy beach.',
-      cost: 'low',
-      avgSEK: 0,
-    },
-    {
-      tag: 'Town',
-      name: 'Smygehuk village',
-      note: "Tiny village around Sweden's southernmost lighthouse.",
-      cost: 'low',
-      avgSEK: 0,
-    },
-  ],
-  daytrip: [
-    {
-      tag: 'Day trip',
-      name: 'Ven island',
-      note: 'Bike around this small island in the Öresund, with farm shops and a distillery.',
-      cost: 'flex',
-      avgSEK: 300,
-    },
-    {
-      tag: 'Day trip',
-      name: 'Helsingborg',
-      note: 'Harbour city with a hilltop keep, an easy train ride from Malmö.',
-      cost: 'flex',
-      avgSEK: 120,
-    },
-    {
-      tag: 'Day trip',
-      name: 'Kristianstad & Ivö',
-      note: 'Wetlands, a limestone island, and a relaxed north-eastern base.',
-      cost: 'flex',
-      avgSEK: 150,
-    },
-  ],
-  copenhagen: [
-    {
-      tag: 'Copenhagen',
-      name: 'Nyhavn & a canal tour',
-      note: 'Colourful harbourfront; boat tours run past the Opera House and the Little Mermaid.',
-      cost: 'flex',
-      avgSEK: 160,
-    },
-    {
-      tag: 'Copenhagen',
-      name: 'Tivoli Gardens',
-      note: 'Historic amusement park right in the city centre, especially good at night.',
-      cost: 'flex',
-      avgSEK: 200,
-    },
-    {
-      tag: 'Copenhagen',
-      name: 'Rosenborg Castle & the Crown Jewels',
-      note: 'Renaissance castle with the Danish crown jewels and a leafy royal garden.',
-      cost: 'flex',
-      avgSEK: 190,
-    },
-    {
-      tag: 'Copenhagen',
-      name: 'Torvehallerne food market',
-      note: 'Glass-roofed market hall with dozens of Nordic food and coffee stalls.',
-      cost: 'flex',
-      avgSEK: 250,
-    },
-    {
-      tag: 'Copenhagen',
-      name: 'Freetown Christiania',
-      note: 'Self-governing neighbourhood known for street art and a laid-back, alternative vibe.',
-      cost: 'low',
-      avgSEK: 0,
-    },
-    {
-      tag: 'Copenhagen',
-      name: 'Strøget & the Round Tower',
-      note: "One of Europe's longest pedestrian streets, plus a climbable 17th-century tower.",
-      cost: 'low',
-      avgSEK: 60,
-    },
-    {
-      tag: 'Copenhagen',
-      name: 'The Little Mermaid statue',
-      note: 'Iconic, famously small harbourside statue — worth a quick stop.',
-      cost: 'low',
-      avgSEK: 0,
-    },
-  ],
-};
-
-// Copenhagen is easily reached from Malmö by train (Öresundståg, roughly 35–40 minutes
-// each way); its prices were originally in DKK and are converted here to rough SEK
-// equivalents for consistency with the rest of the list.
-
-// Note: prices are rough per-person averages (entry fees, a ferry/train ticket,
-// or a typical fika/meal spend) to give a feel for cost, not a quote.
 
 let answers = {};
 let step = 0;
@@ -600,12 +298,19 @@ function buildResults() {
     );
   }
 
+  // When someone is going alone, prefer activities marked as solo-friendly.
+  if (answers.company === 'solo' && mood !== 'alone') {
+    primary.sort(
+      (a, b) =>
+        (a.categories.includes('alone') ? 0 : 1) -
+        (b.categories.includes('alone') ? 0 : 1),
+    );
+  }
+
   // If no options or not a lot are found, shows some near-by options
   let extra = [];
   if (primary.length < count) {
-    Object.keys(places).forEach((key) => {
-      if (key !== mood) extra = extra.concat(places[key]);
-    });
+    extra = sights.filter((sight) => !sight.categories.includes(mood));
     if (answers.budget === 'low') {
       extra.sort(
         (a, b) => (a.cost === 'low' ? 0 : 1) - (b.cost === 'low' ? 0 : 1),
@@ -620,13 +325,33 @@ function buildResults() {
   return picks;
 }
 
+const CATEGORY_LABELS = {
+  coast: 'Coast',
+  nature: 'Nature',
+  culture: 'Culture',
+  cities: 'Cities & towns',
+  fun: 'Fun adventure',
+  alone: 'Good alone',
+  food: 'Food',
+  daytrip: 'Day trip',
+};
+
 function resultItemHTML(p) {
+  const infoLink = p.url
+    ? `<a class="result-link" href="${p.url}" target="_blank" rel="noopener noreferrer">Official info ↗</a>`
+    : '';
+  const categoryTags = p.categories
+    .map((category) => `<span>${CATEGORY_LABELS[category]}</span>`)
+    .join('');
+
   return `
     <div class="result-item">
       <div class="result-tag">${p.tag}</div>
       <div class="result-body">
         <strong>${p.name} <span class="cost-badge ${p.cost}">${formatPrice(p.avgSEK)}</span></strong>
         <span>${p.note}</span>
+        <div class="category-tags">${categoryTags}</div>
+        ${infoLink}
       </div>
     </div>
   `;
@@ -638,12 +363,11 @@ function renderResults() {
     coast: 'a day by the water',
     nature: 'an active day outdoors',
     culture: 'some history and old streets',
-    city: 'city energy in Malmö',
-    adventure: 'a bit of adrenaline',
+    cities: 'a city or charming town to explore',
+    fun: 'bowling, games or a fun adventure',
+    alone: 'something enjoyable to do on your own',
     food: 'good food and fika',
-    towns: 'a charming small town',
     daytrip: 'a day trip somewhere new',
-    copenhagen: 'a day exploring Copenhagen',
   }[answers.mood];
   const budgetNote =
     answers.budget === 'low'
@@ -677,23 +401,21 @@ function renderAllActivities() {
     'coast',
     'nature',
     'culture',
-    'city',
-    'adventure',
+    'cities',
+    'fun',
+    'alone',
     'food',
-    'towns',
     'daytrip',
-    'copenhagen',
   ];
   const groupTitles = {
     coast: 'Coast & beaches',
     nature: 'Nature & hiking',
     culture: 'History & culture',
-    city: 'Malmö',
-    adventure: 'Adventure',
+    cities: 'Explore cities & towns',
+    fun: 'Fun adventures & games',
+    alone: 'Good to do alone',
     food: 'Food & fika',
-    towns: 'Charming towns',
     daytrip: 'Day trips',
-    copenhagen: 'Copenhagen',
   };
 
   card.innerHTML = `
