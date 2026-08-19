@@ -299,6 +299,31 @@ h1 {
   color: var(--text-muted);
   line-height: 1.45;
 }
+.category-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 7px;
+}
+.result-body .category-tags span {
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: rgba(27, 58, 75, 0.08);
+  color: var(--sea);
+  font-size: 10px;
+  font-weight: 600;
+}
+.result-body .result-link {
+  display: inline-block;
+  margin-top: 5px;
+  color: var(--sea);
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+}
+.result-body .result-link:hover {
+  text-decoration: underline;
+}
 
 /* Buttons & Action Row */
 .action-row {
