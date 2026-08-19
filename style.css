@@ -1,27 +1,26 @@
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600;700&display=swap');
 
 :root {
-  /* Schwedisches Farbkonzept – etwas gesättigter */
+  /* Schwedisches Farbkonzept */
   --sweden-blue: #00629b;
   --sweden-blue-dark: #003d63;
-  --sweden-blue-light: #e6f2fc;
-  --sweden-blue-hover: #d2e7fb;
+  --sweden-blue-light: #ebf4fc;
+  --sweden-blue-hover: #d7e9fb;
 
   --sweden-yellow: #fecb00;
   --sweden-yellow-dark: #d9ab00;
-  --sweden-yellow-light: #fffbe6;
-  --sweden-yellow-hover: #fff3b3;
+  --sweden-yellow-light: #fffceb;
+  --sweden-yellow-hover: #fff6cc;
 
   /* Ergänzende Akzentfarben */
   --grass: #2e7d32;
   --coral: #d32f2f;
 
   /* Oberflächen & Text */
-  --bg-page: #dce7f2;
   --bg-card: #ffffff;
   --ink: #0f172a;
   --text-muted: #334155;
-  --border-color: rgba(0, 98, 155, 0.2);
+  --border-color: rgba(0, 98, 155, 0.15);
 }
 
 * {
@@ -34,10 +33,11 @@ body {
   padding: 0;
 }
 
-/* Satterer, professioneller Seitenhintergrund */
+/* Dynamischer, animierter Hintergrund (Blau bis Gelb) */
 body {
-  background: linear-gradient(160deg, #e5eff8 0%, #d4e3f2 100%);
-  background-attachment: fixed;
+  background: linear-gradient(-45deg, #cde2f5, #e6f0fa, #fef3c7, #fde68a);
+  background-size: 400% 400%;
+  animation: ambientGradient 16s ease infinite;
   font-family: 'Work Sans', sans-serif;
   color: var(--ink);
   min-height: 100vh;
@@ -46,6 +46,19 @@ body {
   align-items: center;
   justify-content: center;
   padding: 24px 14px;
+}
+
+/* Sanfte Wellenbewegung des Verlaufs */
+@keyframes ambientGradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 .app {
@@ -61,7 +74,7 @@ body {
   font-size: 12px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--sweden-blue);
+  color: var(--sweden-blue-dark);
   font-weight: 700;
   margin: 0 0 6px 0;
 }
@@ -108,14 +121,14 @@ h1 {
   line-height: 1.4;
 }
 
-/* Card Container mit doppeltem Farb-Header (Blau + Gelb) */
+/* Card Container */
 .card {
   position: relative;
   background: var(--bg-card);
   border: 1px solid var(--border-color);
-  border-radius: 12px;
-  padding: 28px 24px;
-  box-shadow: 0 12px 30px rgba(0, 61, 99, 0.1);
+  border-radius: 20px;
+  padding: 32px 28px;
+  box-shadow: 0 12px 32px rgba(0, 61, 99, 0.08);
   overflow: hidden;
 }
 
@@ -154,7 +167,7 @@ h1 {
   line-height: 1.28;
 }
 
-/* Antwort-Optionen mit sichtbarer Farbgrundierung */
+/* Antwort-Optionen im Pill-Design */
 .options {
   display: flex;
   flex-direction: column;
@@ -163,8 +176,8 @@ h1 {
 
 .opt {
   text-align: left;
-  border-radius: 8px;
-  padding: 14px 18px;
+  border-radius: 9999px;
+  padding: 14px 24px;
   font-family: 'Work Sans', sans-serif;
   font-size: 15px;
   font-weight: 600;
@@ -172,14 +185,14 @@ h1 {
   cursor: pointer;
   transition:
     background-color 0.12s ease,
-    border-color 0.12s ease;
+    border-color 0.12s ease,
+    transform 0.1s ease;
 }
 
 /* Option 1, 3, 5... (Blau-Tönung) */
 .opt:nth-child(odd) {
   background: var(--sweden-blue-light);
-  border: 1.5px solid rgba(0, 98, 155, 0.2);
-  border-left: 5px solid var(--sweden-blue);
+  border: 2px solid rgba(0, 98, 155, 0.25);
   color: var(--sweden-blue-dark);
 }
 
@@ -191,8 +204,7 @@ h1 {
 /* Option 2, 4, 6... (Gelb-Tönung) */
 .opt:nth-child(even) {
   background: var(--sweden-yellow-light);
-  border: 1.5px solid rgba(217, 171, 0, 0.3);
-  border-left: 5px solid var(--sweden-yellow-dark);
+  border: 2px solid rgba(217, 171, 0, 0.35);
   color: #4a3b00;
 }
 
@@ -202,7 +214,7 @@ h1 {
 }
 
 .opt:active {
-  transform: scale(0.995);
+  transform: scale(0.99);
 }
 
 .opt:focus-visible {
@@ -213,15 +225,16 @@ h1 {
 /* Fortschrittsbalken */
 .progress-track {
   height: 8px;
-  background: #cbd5e1;
-  border-radius: 4px;
-  margin-top: 26px;
+  background: #e2e8f0;
+  border-radius: 9999px;
+  margin-top: 28px;
   overflow: hidden;
 }
 
 .progress-fill {
   height: 100%;
   background: var(--sweden-yellow);
+  border-radius: 9999px;
   width: 0%;
 }
 
@@ -258,7 +271,7 @@ h1 {
   letter-spacing: 0.08em;
   min-width: 110px;
   padding-top: 3px;
-  padding-left: 8px;
+  padding-left: 10px;
   border-left: 3px solid var(--sweden-yellow);
 }
 
@@ -279,8 +292,8 @@ h1 {
   font-weight: 600;
   font-size: 11px;
   letter-spacing: 0.03em;
-  padding: 3px 9px;
-  border-radius: 12px;
+  padding: 4px 12px;
+  border-radius: 9999px;
   white-space: nowrap;
 }
 
@@ -312,14 +325,14 @@ h1 {
   background: var(--sweden-blue);
   border: 1px solid var(--sweden-blue-dark);
   color: #ffffff;
-  padding: 12px 20px;
-  border-radius: 8px;
+  padding: 12px 24px;
+  border-radius: 9999px;
   font-family: 'Work Sans', sans-serif;
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;
   transition: background-color 0.1s;
-  box-shadow: 0 4px 12px rgba(0, 98, 155, 0.25);
+  box-shadow: 0 4px 12px rgba(0, 98, 155, 0.2);
 }
 
 .restart:hover {
@@ -330,7 +343,7 @@ h1 {
   background: var(--sweden-yellow);
   border-color: var(--sweden-yellow-dark);
   color: var(--sweden-blue-dark);
-  box-shadow: 0 4px 12px rgba(254, 203, 0, 0.35);
+  box-shadow: 0 4px 12px rgba(254, 203, 0, 0.3);
 }
 
 .action-row .restart.secondary:hover {
@@ -348,8 +361,8 @@ h1 {
   flex: 1;
   border: 1.5px solid #cbd5e1;
   background: #ffffff;
-  border-radius: 6px;
-  padding: 12px 14px;
+  border-radius: 9999px;
+  padding: 12px 18px;
   font-family: 'Work Sans', sans-serif;
   font-size: 15px;
   color: var(--ink);
@@ -364,8 +377,8 @@ h1 {
   background: var(--sweden-blue);
   color: #ffffff;
   border: none;
-  border-radius: 6px;
-  padding: 0 20px;
+  border-radius: 9999px;
+  padding: 0 24px;
   font-family: 'Work Sans', sans-serif;
   font-size: 14px;
   font-weight: 600;
@@ -403,9 +416,9 @@ h1 {
 }
 
 .app-footer a {
-  color: var(--sweden-blue);
+  color: var(--sweden-blue-dark);
   text-decoration: underline;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 @media (max-width: 480px) {
@@ -417,14 +430,15 @@ h1 {
     margin-bottom: 20px;
   }
   .card {
-    padding: 22px 16px;
+    padding: 24px 18px;
+    border-radius: 16px;
   }
   .question {
     font-size: 20px;
     margin-bottom: 18px;
   }
   .opt {
-    padding: 12px 14px;
+    padding: 12px 18px;
     font-size: 15px;
   }
   .results h2 {
@@ -453,10 +467,10 @@ h1 {
   }
   .custom-currency input {
     font-size: 16px;
-    padding: 12px 14px;
+    padding: 12px 18px;
   }
   .custom-currency button {
-    padding: 12px 14px;
+    padding: 12px 18px;
     width: 100%;
   }
 }
