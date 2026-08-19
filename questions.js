@@ -1,4 +1,4 @@
-export const questions = [
+const questions = [
   {
     q: 'What kind of day are you after?',
     key: 'mood',
