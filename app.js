@@ -2,9 +2,10 @@ let answers = {};
 let step = 0;
 let screen = 'intro'; // 'intro' -> 'quiz' -> 'results' | 'all' | 'currency'
 let preCurrencyScreen = 'results';
-let currencyMode = 'sek'; // 'sek' or a currency code like 'EUR'
+let currencyMode = 'sek'; // 'sek' or currency code like 'EUR'
 let fxRate = null;
 let fxError = false;
+let recommendationSeed = Date.now();
 let lastPicks = {};
 
 const card = document.getElementById('card');
@@ -117,6 +118,13 @@ function getDistanceKm(lat1, lon1, lat2, lon2) {
   return R * c;
 }
 
+function formatMinutes(minutes) {
+  if (minutes < 60) return `${minutes} min`;
+  const hours = Math.floor(minutes / 60);
+  const remainder = minutes % 60;
+  return remainder ? `${hours} hr ${remainder} min` : `${hours} hr`;
+}
+
 function currencyLabel() {
   return currencyMode === 'sek'
     ? 'Currency: SEK only'
@@ -196,15 +204,11 @@ function renderManualRateFallback(code) {
 
 function finishCurrencyStep() {
   if (preCurrencyScreen === 'all') {
-    screen = 'all';
     renderAllActivities();
+  } else if (lastPicks && lastPicks.items) {
+    renderCustomPicks(lastPicks.title, lastPicks.sub, lastPicks.items);
   } else {
-    screen = 'results';
-    renderCustomPicks(
-      lastPicks.title || 'Your Skåne picks',
-      lastPicks.sub || 'Here is what fits:',
-      lastPicks.items || []
-    );
+    renderResults();
   }
 }
 
@@ -408,30 +412,60 @@ function buildResults() {
   });
 }
 
-function resultItemHTML(p) {
+function resultItemHTML(item) {
+  if (!item) return '';
+
+  const rankedResult = item.sight ? item : null;
+  const p = rankedResult ? item.sight : item;
+  const estimate = rankedResult ? item.estimate : null;
+
   const infoLink = p.url
     ? `<a class="result-link" href="${p.url}" target="_blank" rel="noopener noreferrer">Official info ↗</a>`
     : '';
+
   const categoryTags = (p.categories || [])
     .map((category) => `<span>${CATEGORY_LABELS[category] || category}</span>`)
     .join('');
+
   const distTag =
-    p.distanceKm !== undefined && p.distanceKm !== Infinity
+    !rankedResult && p.distanceKm !== undefined && p.distanceKm !== Infinity
       ? ` <span class="cost-badge low">~${p.distanceKm.toFixed(1)} km</span>`
       : '';
 
-  // Sicherstellen, dass p.practicalDetails existiert
-  const practicalDetails = p.practicalDetails
-    ? `<span>${p.practicalDetails}</span>`
-    : '';
+  let practicalDetails = '';
+  if (estimate) {
+    practicalDetails = `
+      <div class="practical-details">
+        <span>About ${formatMinutes(estimate.totalMinutes)} total</span>
+        <span>${estimate.travelMinutes} min each way</span>
+        <span>${p.planning ? p.planning.destination : ''}</span>
+      </div>`;
+  } else if (p.practicalDetails) {
+    practicalDetails = `<span>${p.practicalDetails}</span>`;
+  }
+
+  const reason =
+    rankedResult && item.reasons && item.reasons.length
+      ? `<p class="match-reason">Why it fits: ${item.reasons.join(' · ')}</p>`
+      : '';
+
+  const warning =
+    rankedResult && item.mismatches && item.mismatches.length
+      ? `<p class="match-warning">Closest option: ${item.mismatches.join(' and ')}.</p>`
+      : '';
+
+  const displayedCost = estimate ? estimate.totalCostSEK : p.avgSEK || 0;
+  const costClass = p.cost || (displayedCost <= 150 ? 'low' : 'flex');
 
   return `
     <div class="result-item">
-      <div class="result-tag">${p.tag}</div>
+      <div class="result-tag">${p.tag || ''}</div>
       <div class="result-body">
-        <strong>${p.name} <span class="cost-badge ${p.cost}">${formatPrice(p.avgSEK)}</span>${distTag}</strong>
-        <span>${p.note}</span>
+        <strong>${p.name} <span class="cost-badge ${costClass}">${formatPrice(displayedCost)}</span>${distTag}</strong>
+        <span>${p.note || ''}</span>
         ${practicalDetails}
+        ${reason}
+        ${warning}
         <div class="category-tags">${categoryTags}</div>
         ${infoLink}
       </div>
@@ -441,15 +475,19 @@ function resultItemHTML(p) {
 
 function renderResults() {
   const result = buildResults();
-  const transport = RecommendationEngine.TRANSPORT_LABELS[answers.transport];
+  const transport =
+    (RecommendationEngine.TRANSPORT_LABELS &&
+      RecommendationEngine.TRANSPORT_LABELS[answers.transport]) ||
+    'your chosen transport';
+
   const resultMessage = result.exact
     ? `${result.totalExact} activities fit your practical limits. These are your best matches for going by ${transport}.`
     : `Nothing fits all three practical limits exactly. These are the closest options, with each compromise clearly marked.`;
 
   renderCustomPicks(
     'Your Skåne picks',
-    `Sounds like you're after ${moodLabel}, ${budgetNote}. Here's what fits:`,
-    picks
+    `${resultMessage} Prices and travel times are approximate.`,
+    result.picks || []
   );
 }
 
@@ -503,7 +541,6 @@ function renderAllActivities() {
 
   const hasPicks = lastPicks && lastPicks.items && lastPicks.items.length > 0;
 
-  // Wenn Ergebnisse da sind: "Back to picks" + "Start over". Sonst nur "Back to start".
   const buttonsHTML = hasPicks
     ? `
       <button class="restart" id="backToResults">Back to picks</button>
@@ -567,6 +604,7 @@ function resetAll() {
   answers = {};
   step = 0;
   lastPicks = {};
+  recommendationSeed = Date.now();
   renderIntro();
 }
 
