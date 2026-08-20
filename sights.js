@@ -195,7 +195,7 @@ const sights = [
     cost: 'low',
     avgSEK: 70,
     categories: ['food'],
-    url: 'https://www.visitystadosterlen.se/'
+    url: 'https://www.google.com/maps/search/Ystads+Cafés/@55.4335048,13.809646,13z/data=!3m1!4b1?entry=ttu&g_ep=EgoyMDI2MDgxNy4wIKXMDSoASAFQAw%3D%3D'
   },
   {
     name: 'Kristianstad food scene',
