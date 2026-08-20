@@ -365,16 +365,18 @@ function handleSurpriseShortcut() {
 
 function renderQuestion() {
   const total = questions.length;
-  const pct = Math.round((step / total) * 100);
+  const pct = Math.round(((step + 1) / total) * 100);
 
   const q = questions[step];
   card.innerHTML = `
     <div class="qnum">Question ${step + 1} of ${total}</div>
     <div class="question">${q.q}</div>
+    ${q.hint ? `<p class="question-hint">${q.hint}</p>` : ''}
     <div class="options">
       ${q.options.map((o) => `<button class="opt" data-value="${o.value}">${o.label}</button>`).join('')}
     </div>
     <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
+    ${step > 0 ? '<button class="quiz-back" id="quizBack">← Back</button>' : ''}
   `;
 
   card.querySelectorAll('.opt').forEach((btn) => {
@@ -389,45 +391,26 @@ function renderQuestion() {
       }
     });
   });
-}
 
-function pickCount() {
-  if (answers.time === 'short') return 1;
-  if (answers.time === 'half') return 2;
-  return 3;
+  const backButton = document.getElementById('quizBack');
+  if (backButton) {
+    backButton.addEventListener('click', () => {
+      step--;
+      renderQuestion();
+    });
+  }
 }
 
 function buildResults() {
-  const mood = answers.mood;
-  let primary = places[mood] ? [...places[mood]] : [];
-  const count = pickCount();
-
-  if (answers.budget === 'low') {
-    primary.sort(
-      (a, b) => (a.cost === 'low' ? 0 : 1) - (b.cost === 'low' ? 0 : 1)
-    );
-  }
-
-  let extra = [];
-  if (primary.length < count) {
-    extra = sights.filter((sight) => !sight.categories.includes(mood));
-    if (answers.budget === 'low') {
-      extra.sort(
-        (a, b) => (a.cost === 'low' ? 0 : 1) - (b.cost === 'low' ? 0 : 1)
-      );
-    }
-  }
-
-  let picks = primary.slice(0, count);
-  if (picks.length < count) {
-    picks = picks.concat(extra.slice(0, count - picks.length));
-  }
-  return picks;
+  return RecommendationEngine.recommend(sights, answers, {
+    count: 3,
+    seed: recommendationSeed
+  });
 }
 
 function resultItemHTML(p) {
   const infoLink = p.url
-    ? `<a class="result-link" href="${p.url}" target="_blank" rel="noopener noreferrer">Official info ↗</a>`
+    ? `<a class="result-link" href="${p.url}" target="_blank" rel="noopener noreferrer">More info ↗</a>`
     : '';
   const categoryTags = p.categories
     .map((category) => `<span>${CATEGORY_LABELS[category] || category}</span>`)
@@ -443,6 +426,9 @@ function resultItemHTML(p) {
       <div class="result-body">
         <strong>${p.name} <span class="cost-badge ${p.cost}">${formatPrice(p.avgSEK)}</span>${distTag}</strong>
         <span>${p.note}</span>
+        ${practicalDetails}
+        ${reason}
+        ${warning}
         <div class="category-tags">${categoryTags}</div>
         ${infoLink}
       </div>
@@ -451,21 +437,11 @@ function resultItemHTML(p) {
 }
 
 function renderResults() {
-  const picks = buildResults();
-  const moodLabel = {
-    coast: 'a day by the water',
-    nature: 'an active day outdoors',
-    culture: 'some history and old streets',
-    cities: 'a city or charming town to explore',
-    fun: 'bowling, games or a fun adventure',
-    alone: 'something enjoyable to do on your own',
-    food: 'good food and fika',
-    daytrip: 'a day trip somewhere new'
-  }[answers.mood];
-  const budgetNote =
-    answers.budget === 'low'
-      ? 'keeping costs low'
-      : 'open to spending a bit more';
+  const result = buildResults();
+  const transport = RecommendationEngine.TRANSPORT_LABELS[answers.transport];
+  const resultMessage = result.exact
+    ? `${result.totalExact} activities fit your practical limits. These are your best matches for going by ${transport}.`
+    : `Nothing fits all three practical limits exactly. These are the closest options, with each compromise clearly marked.`;
 
   renderCustomPicks(
     'Your Skåne picks',
