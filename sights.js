@@ -105,7 +105,7 @@ const sights = [
     cost: 'low',
     avgSEK: 60,
     categories: ['culture', 'cities', 'alone'],
-    url: 'https://malmo.se/Konst-och-kultur/Museer/Malmo-museer/Slottet-Malmohus.html'
+    url: 'https://malmo.se/Uppleva-och-gora/Konst-och-museer/Malmo-museum/Besok-Malmo-museum/Vara-byggnader/Slottet/Malmohus-slott.html'
   },
   {
     name: "Ales stenar (Ale's Stones)",
@@ -123,7 +123,7 @@ const sights = [
     cost: 'flex',
     avgSEK: 100,
     categories: ['culture'],
-    url: 'https://www.fotevikensmuseum.se/'
+    url: 'https://www.fotevikenvikingaby.se'
   },
   {
     name: 'Västra Hamnen & Turning Torso',
@@ -177,7 +177,7 @@ const sights = [
     cost: 'flex',
     avgSEK: 150,
     categories: ['food'],
-    url: 'https://www.google.com/maps/search/?api=1&query=Lilla+Torg+food+market+Malm%C3%B6'
+    url: 'https://www.google.com/maps/place/Malmö+-+Lilla+Torg/@55.6051846,12.9962342,16z/data=!3m1!4b1!4m6!3m5!1s0x4653a3b3fe5c57f5:0x5ae847443add569a!8m2!3d55.6051846!4d12.9988061!16s%2Fg%2F11dyl6wfq?entry=ttu&g_ep=EgoyMDI2MDgxNy4wIKXMDSoASAFQAw%3D%3D'
   },
   {
     name: 'Fika in Gamla Väster',
@@ -303,7 +303,7 @@ const sights = [
     cost: 'low',
     avgSEK: 0,
     categories: ['cities', 'culture', 'alone'],
-    url: 'https://www.google.com/maps/search/?api=1&query=Freetown+Christiania+Copenhagen'
+    url: 'https://www.visitcopenhagen.com/copenhagen/areas/neighborhoods/area-guide-christiania'
   },
   {
     name: 'Strøget & the Round Tower',
@@ -429,7 +429,7 @@ const sights = [
     cost: 'flex',
     avgSEK: 120,
     categories: ['alone', 'fun', 'cities'],
-    url: 'https://visitlund.se/uppleva-och-gora/aktiviteter-och-natur/barnens-lund'
+    url: 'https://lund.se/hogevall'
   },
   {
     name: 'Lund Botanical Garden',
