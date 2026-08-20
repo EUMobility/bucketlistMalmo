@@ -460,6 +460,342 @@ const sights = [
   }
 ];
 
+// Approximate planning data from central Malmö. Travel times are one-way;
+// travel costs are rough return-trip estimates. They are deliberately kept in
+// one place so they can be checked and updated without touching the quiz logic.
+const destinationCatalog = {
+  malmo: {
+    label: 'Malmö',
+    travel: {
+      walk: { minutes: 15, costSEK: 0 },
+      bike: { minutes: 10, costSEK: 0 },
+      transit: { minutes: 15, costSEK: 64 },
+      car: { minutes: 12, costSEK: 50 }
+    }
+  },
+  lomma: {
+    label: 'Lomma',
+    travel: {
+      bike: { minutes: 50, costSEK: 0 },
+      transit: { minutes: 30, costSEK: 110 },
+      car: { minutes: 25, costSEK: 70 }
+    }
+  },
+  skanor: {
+    label: 'Skanör',
+    travel: {
+      bike: { minutes: 100, costSEK: 0 },
+      transit: { minutes: 65, costSEK: 130 },
+      car: { minutes: 35, costSEK: 110 }
+    }
+  },
+  bjare: {
+    label: 'Bjäre Peninsula',
+    travel: {
+      transit: { minutes: 150, costSEK: 300 },
+      car: { minutes: 95, costSEK: 260 }
+    }
+  },
+  kullaberg: {
+    label: 'Kullaberg',
+    travel: {
+      transit: { minutes: 150, costSEK: 300 },
+      car: { minutes: 90, costSEK: 250 }
+    }
+  },
+  sandhammaren: {
+    label: 'Sandhammaren',
+    travel: {
+      transit: { minutes: 145, costSEK: 260 },
+      car: { minutes: 80, costSEK: 220 }
+    }
+  },
+  smygehuk: {
+    label: 'Smygehuk',
+    travel: {
+      transit: { minutes: 90, costSEK: 180 },
+      car: { minutes: 55, costSEK: 150 }
+    }
+  },
+  soderasen: {
+    label: 'Söderåsen',
+    travel: {
+      transit: { minutes: 100, costSEK: 220 },
+      car: { minutes: 65, costSEK: 180 }
+    }
+  },
+  stenshuvud: {
+    label: 'Stenshuvud',
+    travel: {
+      transit: { minutes: 150, costSEK: 280 },
+      car: { minutes: 90, costSEK: 240 }
+    }
+  },
+  kristianstad: {
+    label: 'Kristianstad',
+    travel: {
+      transit: { minutes: 80, costSEK: 230 },
+      car: { minutes: 75, costSEK: 210 }
+    }
+  },
+  krapperup: {
+    label: 'Krapperup',
+    travel: {
+      transit: { minutes: 145, costSEK: 290 },
+      car: { minutes: 85, costSEK: 230 }
+    }
+  },
+  lund: {
+    label: 'Lund',
+    travel: {
+      bike: { minutes: 70, costSEK: 0 },
+      transit: { minutes: 25, costSEK: 120 },
+      car: { minutes: 25, costSEK: 90 }
+    }
+  },
+  ales: {
+    label: 'Kåseberga',
+    travel: {
+      transit: { minutes: 120, costSEK: 250 },
+      car: { minutes: 75, costSEK: 210 }
+    }
+  },
+  hollviken: {
+    label: 'Höllviken',
+    travel: {
+      bike: { minutes: 80, costSEK: 0 },
+      transit: { minutes: 50, costSEK: 130 },
+      car: { minutes: 30, costSEK: 100 }
+    }
+  },
+  hassleholm: {
+    label: 'Hässleholm area',
+    travel: {
+      transit: { minutes: 110, costSEK: 260 },
+      car: { minutes: 85, costSEK: 230 }
+    }
+  },
+  ystad: {
+    label: 'Ystad',
+    travel: {
+      transit: { minutes: 60, costSEK: 180 },
+      car: { minutes: 50, costSEK: 150 }
+    }
+  },
+  simrishamn: {
+    label: 'Simrishamn',
+    travel: {
+      transit: { minutes: 95, costSEK: 230 },
+      car: { minutes: 75, costSEK: 210 }
+    }
+  },
+  ahus: {
+    label: 'Åhus',
+    travel: {
+      transit: { minutes: 115, costSEK: 260 },
+      car: { minutes: 90, costSEK: 240 }
+    }
+  },
+  ven: {
+    label: 'Ven',
+    travel: {
+      transit: { minutes: 105, costSEK: 280 },
+      car: { minutes: 85, costSEK: 260 }
+    }
+  },
+  helsingborg: {
+    label: 'Helsingborg',
+    travel: {
+      transit: { minutes: 50, costSEK: 200 },
+      car: { minutes: 65, costSEK: 190 }
+    }
+  },
+  copenhagen: {
+    label: 'Copenhagen',
+    travel: {
+      transit: { minutes: 45, costSEK: 300 },
+      car: { minutes: 55, costSEK: 500 }
+    }
+  }
+};
+
+const destinationGroups = {
+  skanor: ['Skanör sea bath'],
+  lomma: ['Lomma beach'],
+  bjare: ['Hovs Hallar'],
+  kullaberg: ['Kullaberg'],
+  sandhammaren: ['Sandhammaren beach'],
+  smygehuk: ['Smygehuk'],
+  soderasen: ['Söderåsen National Park'],
+  stenshuvud: ['Stenshuvud National Park'],
+  kristianstad: [
+    'Naturum Vattenriket, Kristianstad',
+    'Kristianstad food scene',
+    'Kristianstad & Ivö'
+  ],
+  krapperup: ['Krapperup Castle'],
+  lund: [
+    'Lund university area',
+    'Högevall adventure pool',
+    'Lund Botanical Garden',
+    'Check Lund student events'
+  ],
+  ales: ["Ales stenar (Ale's Stones)"],
+  hollviken: ['Foteviken Museum (Viking Reserve)'],
+  hassleholm: ['Multilevel zipline, Sandakra (near Hässleholm)'],
+  ystad: ["Ystad's cafés and bakeries", 'Ystad old town'],
+  simrishamn: ['Simrishamn'],
+  ahus: ['Åhus'],
+  ven: ['Cycle around Ven island'],
+  helsingborg: ['Helsingborg'],
+  copenhagen: [
+    'Nyhavn & a canal tour',
+    'Tivoli Gardens',
+    'Rosenborg Castle & the Crown Jewels',
+    'Torvehallerne food market',
+    'Freetown Christiania',
+    'Strøget & the Round Tower',
+    'The Little Mermaid statue',
+    'Take the train to Copenhagen'
+  ],
+  malmo: [
+    'Malmöhus Castle',
+    'Västra Hamnen & Turning Torso',
+    'Scaniaparken',
+    'Lilla Torg & Gamla Väster',
+    'Möllevångstorget',
+    'Lilla Torg food market, Malmö',
+    'Fika in Gamla Väster',
+    'Watch a film at Panora',
+    'Browse Emporia or Triangeln',
+    'Bowling and games at Big Bowl',
+    "O'Learys Entré game room",
+    'Play pool at Interpool Malmö',
+    'Stapelbäddsparken',
+    'Try a Kul i Malmö activity',
+    'Borrow sports gear at Fritidsbanken',
+    'Malmö Konsthall',
+    'Disgusting Food Museum',
+    'Explore Malmö by bike'
+  ]
+};
+
+const destinationByName = Object.fromEntries(
+  Object.entries(destinationGroups).flatMap(([destination, names]) =>
+    names.map((name) => [name, destination])
+  )
+);
+
+const durationByName = {
+  'The Little Mermaid statue': 45,
+  'Möllevångstorget': 60,
+  'Borrow sports gear at Fritidsbanken': 60,
+  'Malmö Konsthall': 75,
+  'Fika in Gamla Väster': 75,
+  'Scaniaparken': 90,
+  'Stapelbäddsparken': 90,
+  'Lilla Torg & Gamla Väster': 90,
+  'Lilla Torg food market, Malmö': 90,
+  'Disgusting Food Museum': 90,
+  'Västra Hamnen & Turning Torso': 120,
+  'Malmöhus Castle': 120,
+  'Watch a film at Panora': 150,
+  'Explore Malmö by bike': 180,
+  'Söderåsen National Park': 240,
+  'Stenshuvud National Park': 240,
+  'Hovs Hallar': 240,
+  'Kullaberg': 240,
+  'Kristianstad & Ivö': 300,
+  'Cycle around Ven island': 300,
+  'Take the train to Copenhagen': 360
+};
+
+const indoorActivities = new Set([
+  'Malmöhus Castle',
+  'Foteviken Museum (Viking Reserve)',
+  'Watch a film at Panora',
+  'Browse Emporia or Triangeln',
+  'Bowling and games at Big Bowl',
+  "O'Learys Entré game room",
+  'Play pool at Interpool Malmö',
+  'Malmö Konsthall',
+  'Disgusting Food Museum',
+  'Högevall adventure pool',
+  'Rosenborg Castle & the Crown Jewels'
+]);
+
+const flexibleSettingActivities = new Set([
+  'Lund university area',
+  'Lilla Torg & Gamla Väster',
+  'Möllevångstorget',
+  'Lilla Torg food market, Malmö',
+  'Fika in Gamla Väster',
+  "Ystad's cafés and bakeries",
+  'Kristianstad food scene',
+  'Ystad old town',
+  'Simrishamn',
+  'Åhus',
+  'Helsingborg',
+  'Nyhavn & a canal tour',
+  'Tivoli Gardens',
+  'Torvehallerne food market',
+  'Freetown Christiania',
+  'Strøget & the Round Tower',
+  'Try a Kul i Malmö activity',
+  'Check Lund student events',
+  'Take the train to Copenhagen'
+]);
+
+const peopleFocusedActivities = new Set([
+  'Multilevel zipline, Sandakra (near Hässleholm)',
+  'Bowling and games at Big Bowl',
+  "O'Learys Entré game room",
+  'Play pool at Interpool Malmö'
+]);
+
+function inferInterests(categories) {
+  const interests = [];
+  if (categories.includes('nature') || categories.includes('coast')) {
+    interests.push('nature');
+  }
+  if (categories.includes('food')) interests.push('food');
+  if (
+    categories.includes('culture') ||
+    categories.includes('cities') ||
+    categories.includes('daytrip')
+  ) {
+    interests.push('culture');
+  }
+  if (categories.includes('fun')) interests.push('games');
+  return interests;
+}
+
+sights.forEach((sight) => {
+  const destinationKey = destinationByName[sight.name];
+  const destination = destinationCatalog[destinationKey];
+
+  if (!destination) {
+    throw new Error(`Missing planning data for ${sight.name}`);
+  }
+
+  sight.planning = {
+    destination: destination.label,
+    travel: destination.travel,
+    activityMinutes:
+      durationByName[sight.name] ||
+      (sight.categories.includes('daytrip') ? 240 : 120),
+    setting: indoorActivities.has(sight.name)
+      ? 'indoor'
+      : flexibleSettingActivities.has(sight.name)
+        ? 'either'
+        : 'outdoor',
+    company: peopleFocusedActivities.has(sight.name)
+      ? ['people']
+      : ['alone', 'people'],
+    interests: inferInterests(sight.categories)
+  };
+});
+
 const categoryKeys = [
   'coast',
   'nature',
