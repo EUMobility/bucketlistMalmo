@@ -410,15 +410,20 @@ function buildResults() {
 
 function resultItemHTML(p) {
   const infoLink = p.url
-    ? `<a class="result-link" href="${p.url}" target="_blank" rel="noopener noreferrer">More info ↗</a>`
+    ? `<a class="result-link" href="${p.url}" target="_blank" rel="noopener noreferrer">Official info ↗</a>`
     : '';
-  const categoryTags = p.categories
+  const categoryTags = (p.categories || [])
     .map((category) => `<span>${CATEGORY_LABELS[category] || category}</span>`)
     .join('');
   const distTag =
     p.distanceKm !== undefined && p.distanceKm !== Infinity
       ? ` <span class="cost-badge low">~${p.distanceKm.toFixed(1)} km</span>`
       : '';
+
+  // Sicherstellen, dass p.practicalDetails existiert
+  const practicalDetails = p.practicalDetails
+    ? `<span>${p.practicalDetails}</span>`
+    : '';
 
   return `
     <div class="result-item">
@@ -427,8 +432,6 @@ function resultItemHTML(p) {
         <strong>${p.name} <span class="cost-badge ${p.cost}">${formatPrice(p.avgSEK)}</span>${distTag}</strong>
         <span>${p.note}</span>
         ${practicalDetails}
-        ${reason}
-        ${warning}
         <div class="category-tags">${categoryTags}</div>
         ${infoLink}
       </div>
