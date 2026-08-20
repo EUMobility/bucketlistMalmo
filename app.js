@@ -5,7 +5,7 @@ let preCurrencyScreen = 'results';
 let currencyMode = 'sek'; // 'sek' or a currency code like 'EUR'
 let fxRate = null;
 let fxError = false;
-let lastPicks = [];
+let lastPicks = {};
 
 const card = document.getElementById('card');
 
@@ -264,7 +264,7 @@ function renderIntro() {
       <button class="opt primary-cta" id="startBtn">Take Quiz →</button>
     </div>
 
-    <div class="qnum" style="opacity:0.6; font-size:0.75rem; margin-bottom:8px;">OR QUICK START</div>
+    <div class="qnum" style="opacity:0.6; font-size:0.85rem; margin-bottom:17px;">OR QUICK START</div>
     <div class="shortcuts-list">
       <button class="opt subtle-shortcut" id="nearbyBtn">Give me something nearby</button>
       <button class="opt subtle-shortcut" id="rainBtn">It's raining - what can I do?</button>
@@ -522,6 +522,18 @@ function renderAllActivities() {
     daytrip: 'Day trips'
   };
 
+  const hasPicks = lastPicks && lastPicks.items && lastPicks.items.length > 0;
+
+  // Wenn Ergebnisse da sind: "Back to picks" + "Start over". Sonst nur "Back to start".
+  const buttonsHTML = hasPicks
+    ? `
+      <button class="restart" id="backToResults">Back to picks</button>
+      <button class="restart secondary" id="restart2">Start over</button>
+    `
+    : `
+      <button class="restart" id="backToStart">Back to start</button>
+    `;
+
   card.innerHTML = `
     <div class="results all-list">
       <h2>Every activity on the list</h2>
@@ -542,8 +554,7 @@ function renderAllActivities() {
         )
         .join('')}
       <div class="action-row">
-        <button class="restart" id="backToResults">Back to picks</button>
-        <button class="restart secondary" id="restart2">Start over</button>
+        ${buttonsHTML}
         <button class="restart secondary" id="openCurrency2">${currencyLabel()}</button>
       </div>
     </div>
@@ -559,14 +570,15 @@ function renderAllActivities() {
     });
   });
 
-  document.getElementById('restart2').addEventListener('click', resetAll);
-  document.getElementById('backToResults').addEventListener('click', () => {
-    if (lastPicks.items && lastPicks.items.length) {
+  if (hasPicks) {
+    document.getElementById('backToResults').addEventListener('click', () => {
       renderCustomPicks(lastPicks.title, lastPicks.sub, lastPicks.items);
-    } else {
-      renderIntro();
-    }
-  });
+    });
+    document.getElementById('restart2').addEventListener('click', resetAll);
+  } else {
+    document.getElementById('backToStart').addEventListener('click', resetAll);
+  }
+
   document
     .getElementById('openCurrency2')
     .addEventListener('click', renderCurrencyStep);
@@ -575,6 +587,7 @@ function renderAllActivities() {
 function resetAll() {
   answers = {};
   step = 0;
+  lastPicks = {};
   renderIntro();
 }
 
