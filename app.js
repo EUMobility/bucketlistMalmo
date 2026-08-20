@@ -5,7 +5,7 @@ let preCurrencyScreen = 'results';
 let currencyMode = 'sek'; // 'sek' or a currency code like 'EUR'
 let fxRate = null;
 let fxError = false;
-let recommendationSeed = Date.now();
+let lastPicks = {};
 
 const card = document.getElementById('card');
 
@@ -16,6 +16,106 @@ const CURRENCY_SYMBOLS = {
   DKK: 'kr',
   NOK: 'kr'
 };
+
+const CATEGORY_LABELS = {
+  coast: 'Coast',
+  nature: 'Nature',
+  culture: 'Culture',
+  cities: 'Cities & towns',
+  fun: 'Fun adventure',
+  alone: 'Good alone',
+  food: 'Food',
+  daytrip: 'Day trip'
+};
+
+const SIGHT_COORDS = {
+  'Skanör sea bath': { lat: 55.4172, lng: 12.8358 },
+  'Lomma beach': { lat: 55.6744, lng: 13.0645 },
+  'Hovs Hallar': { lat: 56.4522, lng: 12.7118 },
+  Kullaberg: { lat: 56.3039, lng: 12.4533 },
+  'Sandhammaren beach': { lat: 55.3881, lng: 14.1947 },
+  Smygehuk: { lat: 55.3389, lng: 13.3581 },
+  'Söderåsen National Park': { lat: 56.0333, lng: 13.25 },
+  'Stenshuvud National Park': { lat: 55.6592, lng: 14.2742 },
+  'Naturum Vattenriket, Kristianstad': { lat: 56.0272, lng: 14.1533 },
+  'Krapperup Castle': { lat: 56.2611, lng: 12.5306 },
+  'Lund university area': { lat: 55.7058, lng: 13.1932 },
+  'Malmöhus Castle': { lat: 55.605, lng: 12.988 },
+  "Ales stenar (Ale's Stones)": { lat: 55.3828, lng: 14.0544 },
+  'Foteviken Museum (Viking Reserve)': { lat: 55.4706, lng: 12.9567 },
+  'Västra Hamnen & Turning Torso': { lat: 55.6133, lng: 12.9764 },
+  Scaniaparken: { lat: 55.6158, lng: 12.9731 },
+  'Lilla Torg & Gamla Väster': { lat: 55.6048, lng: 12.9972 },
+  Möllevångstorget: { lat: 55.5919, lng: 13.0078 },
+  'Multilevel zipline, Sandakra (near Hässleholm)': {
+    lat: 56.1211,
+    lng: 13.7822
+  },
+  'Lilla Torg food market, Malmö': { lat: 55.6048, lng: 12.9972 },
+  'Fika in Gamla Väster': { lat: 55.6048, lng: 12.9972 },
+  "Ystad's cafés and bakeries": { lat: 55.4294, lng: 13.82 },
+  'Kristianstad food scene': { lat: 56.0312, lng: 14.1528 },
+  'Ystad old town': { lat: 55.4294, lng: 13.82 },
+  Simrishamn: { lat: 55.5556, lng: 14.3486 },
+  Åhus: { lat: 55.925, lng: 14.2958 },
+  'Cycle around Ven island': { lat: 55.9056, lng: 12.6986 },
+  Helsingborg: { lat: 56.0467, lng: 12.6944 },
+  'Kristianstad & Ivö': { lat: 56.1222, lng: 14.4056 },
+  'Nyhavn & a canal tour': { lat: 55.6797, lng: 12.5914 },
+  'Tivoli Gardens': { lat: 55.6736, lng: 12.5681 },
+  'Rosenborg Castle & the Crown Jewels': { lat: 55.6858, lng: 12.5772 },
+  'Torvehallerne food market': { lat: 55.6836, lng: 12.5694 },
+  'Freetown Christiania': { lat: 55.6733, lng: 12.5983 },
+  'Strøget & the Round Tower': { lat: 55.6814, lng: 12.5758 },
+  'The Little Mermaid statue': { lat: 55.689, lng: 12.5992 },
+  'Watch a film at Panora': { lat: 55.5936, lng: 13.0031 },
+  'Browse Emporia or Triangeln': { lat: 55.5644, lng: 12.9733 },
+  'Bowling and games at Big Bowl': { lat: 55.6033, lng: 13.0233 },
+  "O'Learys Entré game room": { lat: 55.6067, lng: 13.0217 },
+  'Play pool at Interpool Malmö': { lat: 55.6022, lng: 13.0014 },
+  Stapelbäddsparken: { lat: 55.6144, lng: 12.9786 },
+  'Try a Kul i Malmö activity': { lat: 55.6, lng: 13.0 },
+  'Borrow sports gear at Fritidsbanken': { lat: 55.5808, lng: 12.9939 },
+  'Malmö Konsthall': { lat: 55.5956, lng: 13.0008 },
+  'Disgusting Food Museum': { lat: 55.6061, lng: 12.9997 },
+  'Explore Malmö by bike': { lat: 55.605, lng: 12.988 },
+  'Högevall adventure pool': { lat: 55.7003, lng: 13.1869 },
+  'Lund Botanical Garden': { lat: 55.7042, lng: 13.2025 },
+  'Check Lund student events': { lat: 55.7058, lng: 13.1932 },
+  'Take the train to Copenhagen': { lat: 55.6728, lng: 12.5647 }
+};
+
+const RAINY_SIGHTS = [
+  'Watch a film at Panora',
+  'Browse Emporia or Triangeln',
+  'Bowling and games at Big Bowl',
+  "O'Learys Entré game room",
+  'Play pool at Interpool Malmö',
+  'Malmö Konsthall',
+  'Disgusting Food Museum',
+  'Högevall adventure pool',
+  'Torvehallerne food market',
+  'Rosenborg Castle & the Crown Jewels',
+  'Malmöhus Castle',
+  'Fika in Gamla Väster',
+  'Lilla Torg food market, Malmö',
+  "Ystad's cafés and bakeries",
+  'Kristianstad food scene'
+];
+
+function getDistanceKm(lat1, lon1, lat2, lon2) {
+  const R = 6371;
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLon = ((lon2 - lon1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
 
 function currencyLabel() {
   return currencyMode === 'sek'
@@ -100,7 +200,11 @@ function finishCurrencyStep() {
     renderAllActivities();
   } else {
     screen = 'results';
-    renderResults();
+    renderCustomPicks(
+      lastPicks.title || 'Your Skåne picks',
+      lastPicks.sub || 'Here is what fits:',
+      lastPicks.items || []
+    );
   }
 }
 
@@ -130,35 +234,6 @@ function renderCurrencyStep() {
   card.querySelectorAll('.opt').forEach((btn) => {
     btn.addEventListener('click', async () => {
       const code = btn.dataset.code;
-      if (code === 'other') {
-        const wrap = document.getElementById('customCurrencyWrap');
-        wrap.innerHTML = `
-          <div class="custom-currency">
-            <input type="text" maxlength="3" placeholder="e.g. PLN, INR, CNY" id="customCode">
-            <button id="customGo">Use this</button>
-          </div>
-        `;
-        document
-          .getElementById('customGo')
-          .addEventListener('click', async () => {
-            const val = document
-              .getElementById('customCode')
-              .value.trim()
-              .toUpperCase();
-            if (val.length !== 3) return;
-            currencyMode = val;
-            renderFetchingRate();
-            const ok = await fetchRate(val);
-            if (ok) {
-              fxError = false;
-              finishCurrencyStep();
-            } else {
-              fxError = true;
-              renderManualRateFallback(val);
-            }
-          });
-        return;
-      }
       if (code === 'sek') {
         currencyMode = 'sek';
         finishCurrencyStep();
@@ -183,16 +258,109 @@ function renderIntro() {
   card.innerHTML = `
     <div class="qnum">Welcome</div>
     <div class="question">Find your next Skåne adventure</div>
-    <p class="sub" style="margin-bottom:22px;">Answer 5 quick questions and get realistic ideas based on your total time, transport and budget — starting from Malmö.</p>
-    <div class="options">
-      <button class="opt" id="startBtn">Let's go →</button>
+    <p class="sub" style="margin-bottom:20px;">Answer 4 quick questions to get picks from your Skåne bucket list.</p>
+
+    <div class="options" style="margin-bottom:28px;">
+      <button class="opt primary-cta" id="startBtn">Take Quiz →</button>
+    </div>
+
+    <div class="qnum" style="opacity:0.6; font-size:0.85rem; margin-bottom:17px;">OR QUICK START</div>
+    <div class="shortcuts-list">
+      <button class="opt subtle-shortcut" id="nearbyBtn">Give me something nearby</button>
+      <button class="opt subtle-shortcut" id="rainBtn">It's raining - what can I do?</button>
+      <button class="opt subtle-shortcut" id="surpriseBtn">Surprise me</button>
+      <button class="opt subtle-shortcut" id="allSightsBtn">All sights</button>
     </div>
   `;
+
   document.getElementById('startBtn').addEventListener('click', () => {
     screen = 'quiz';
     step = 0;
     renderQuestion();
   });
+
+  document
+    .getElementById('nearbyBtn')
+    .addEventListener('click', handleNearbyShortcut);
+  document
+    .getElementById('rainBtn')
+    .addEventListener('click', handleRainShortcut);
+  document
+    .getElementById('surpriseBtn')
+    .addEventListener('click', handleSurpriseShortcut);
+  document
+    .getElementById('allSightsBtn')
+    .addEventListener('click', renderAllActivities);
+}
+
+function handleNearbyShortcut() {
+  card.innerHTML = `
+    <div class="qnum">Location</div>
+    <div class="question">Finding sights near you…</div>
+    <p class="sub">Please confirm the location permission in your browser.</p>
+  `;
+
+  if (!navigator.geolocation) {
+    card.innerHTML = `
+      <div class="question">Geolocation is not supported by your browser.</div>
+      <div class="action-row"><button class="restart" id="backBtn">Back</button></div>
+    `;
+    document.getElementById('backBtn').addEventListener('click', renderIntro);
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
+      const userLat = pos.coords.latitude;
+      const userLng = pos.coords.longitude;
+
+      const sightsWithDist = sights.map((s) => {
+        const coords = SIGHT_COORDS[s.name];
+        const dist = coords
+          ? getDistanceKm(userLat, userLng, coords.lat, coords.lng)
+          : Infinity;
+        return { ...s, distanceKm: dist };
+      });
+
+      sightsWithDist.sort((a, b) => a.distanceKm - b.distanceKm);
+      const closest = sightsWithDist.slice(0, 3);
+
+      renderCustomPicks(
+        'Nearby picks',
+        'Here are the sights closest to your current location:',
+        closest
+      );
+    },
+    () => {
+      card.innerHTML = `
+        <div class="qnum">Location Access</div>
+        <div class="question">Could not get location</div>
+        <p class="sub">Location access was denied or failed. You can still use the quiz or other shortcuts.</p>
+        <div class="action-row"><button class="restart" id="backBtn">Back</button></div>
+      `;
+      document.getElementById('backBtn').addEventListener('click', renderIntro);
+    },
+    { maximumAge: 60000, timeout: 10000 }
+  );
+}
+
+function handleRainShortcut() {
+  const indoor = sights.filter((s) => RAINY_SIGHTS.includes(s.name));
+  const shuffled = [...indoor].sort(() => 0.5 - Math.random());
+  renderCustomPicks(
+    'Rainy day options',
+    'Stay dry with these indoor-friendly spots:',
+    shuffled.slice(0, 3)
+  );
+}
+
+function handleSurpriseShortcut() {
+  const shuffled = [...sights].sort(() => 0.5 - Math.random());
+  renderCustomPicks(
+    'Surprise picks',
+    'Here are 3 random spots from the bucket list:',
+    shuffled.slice(0, 3)
+  );
 }
 
 function renderQuestion() {
@@ -240,57 +408,23 @@ function buildResults() {
   });
 }
 
-const CATEGORY_LABELS = {
-  coast: 'Coast',
-  nature: 'Nature',
-  culture: 'Culture',
-  cities: 'Cities & towns',
-  fun: 'Fun adventure',
-  alone: 'Good alone',
-  food: 'Food',
-  daytrip: 'Day trip'
-};
-
-function formatMinutes(minutes) {
-  if (minutes < 60) return `${minutes} min`;
-  const hours = Math.floor(minutes / 60);
-  const remainder = minutes % 60;
-  return remainder ? `${hours} hr ${remainder} min` : `${hours} hr`;
-}
-
-function resultItemHTML(item) {
-  const rankedResult = item && item.sight;
-  const p = rankedResult ? item.sight : item;
-  const estimate = rankedResult ? item.estimate : null;
+function resultItemHTML(p) {
   const infoLink = p.url
     ? `<a class="result-link" href="${p.url}" target="_blank" rel="noopener noreferrer">More info ↗</a>`
     : '';
   const categoryTags = p.categories
-    .map((category) => `<span>${CATEGORY_LABELS[category]}</span>`)
+    .map((category) => `<span>${CATEGORY_LABELS[category] || category}</span>`)
     .join('');
-  const practicalDetails = estimate
-    ? `<div class="practical-details">
-        <span>About ${formatMinutes(estimate.totalMinutes)} total</span>
-        <span>${estimate.travelMinutes} min each way</span>
-        <span>${p.planning.destination}</span>
-      </div>`
-    : '';
-  const reason =
-    rankedResult && item.reasons.length
-      ? `<p class="match-reason">Why it fits: ${item.reasons.join(' · ')}</p>`
+  const distTag =
+    p.distanceKm !== undefined && p.distanceKm !== Infinity
+      ? ` <span class="cost-badge low">~${p.distanceKm.toFixed(1)} km</span>`
       : '';
-  const warning =
-    rankedResult && item.mismatches.length
-      ? `<p class="match-warning">Closest option: ${item.mismatches.join(' and ')}.</p>`
-      : '';
-  const displayedCost = estimate ? estimate.totalCostSEK : p.avgSEK;
-  const displayedCostClass = displayedCost <= 150 ? 'low' : 'flex';
 
   return `
     <div class="result-item">
       <div class="result-tag">${p.tag}</div>
       <div class="result-body">
-        <strong>${p.name} <span class="cost-badge ${displayedCostClass}">${formatPrice(displayedCost)}</span></strong>
+        <strong>${p.name} <span class="cost-badge ${p.cost}">${formatPrice(p.avgSEK)}</span>${distTag}</strong>
         <span>${p.note}</span>
         ${practicalDetails}
         ${reason}
@@ -309,11 +443,22 @@ function renderResults() {
     ? `${result.totalExact} activities fit your practical limits. These are your best matches for going by ${transport}.`
     : `Nothing fits all three practical limits exactly. These are the closest options, with each compromise clearly marked.`;
 
+  renderCustomPicks(
+    'Your Skåne picks',
+    `Sounds like you're after ${moodLabel}, ${budgetNote}. Here's what fits:`,
+    picks
+  );
+}
+
+function renderCustomPicks(title, subtitle, picks) {
+  screen = 'results';
+  lastPicks = { title, sub: subtitle, items: picks };
+
   card.innerHTML = `
     <div class="results">
-      <h2>Your Skåne picks</h2>
-      <p class="sub">${resultMessage} Prices and travel times are approximate.</p>
-      ${result.picks.map(resultItemHTML).join('')}
+      <h2>${title}</h2>
+      <p class="sub">${subtitle}</p>
+      ${picks.map(resultItemHTML).join('')}
       <div class="action-row">
         <button class="restart" id="restart">Start over</button>
         <button class="restart secondary" id="seeAll">See every activity</button>
@@ -353,6 +498,18 @@ function renderAllActivities() {
     daytrip: 'Day trips'
   };
 
+  const hasPicks = lastPicks && lastPicks.items && lastPicks.items.length > 0;
+
+  // Wenn Ergebnisse da sind: "Back to picks" + "Start over". Sonst nur "Back to start".
+  const buttonsHTML = hasPicks
+    ? `
+      <button class="restart" id="backToResults">Back to picks</button>
+      <button class="restart secondary" id="restart2">Start over</button>
+    `
+    : `
+      <button class="restart" id="backToStart">Back to start</button>
+    `;
+
   card.innerHTML = `
     <div class="results all-list">
       <h2>Every activity on the list</h2>
@@ -373,8 +530,7 @@ function renderAllActivities() {
         )
         .join('')}
       <div class="action-row">
-        <button class="restart" id="backToResults">Back to my picks</button>
-        <button class="restart secondary" id="restart2">Start over</button>
+        ${buttonsHTML}
         <button class="restart secondary" id="openCurrency2">${currencyLabel()}</button>
       </div>
     </div>
@@ -390,11 +546,15 @@ function renderAllActivities() {
     });
   });
 
-  document.getElementById('restart2').addEventListener('click', resetAll);
-  document.getElementById('backToResults').addEventListener('click', () => {
-    screen = 'results';
-    renderResults();
-  });
+  if (hasPicks) {
+    document.getElementById('backToResults').addEventListener('click', () => {
+      renderCustomPicks(lastPicks.title, lastPicks.sub, lastPicks.items);
+    });
+    document.getElementById('restart2').addEventListener('click', resetAll);
+  } else {
+    document.getElementById('backToStart').addEventListener('click', resetAll);
+  }
+
   document
     .getElementById('openCurrency2')
     .addEventListener('click', renderCurrencyStep);
@@ -403,9 +563,8 @@ function renderAllActivities() {
 function resetAll() {
   answers = {};
   step = 0;
-  screen = 'quiz';
-  recommendationSeed = Date.now();
-  renderQuestion();
+  lastPicks = {};
+  renderIntro();
 }
 
 renderIntro();

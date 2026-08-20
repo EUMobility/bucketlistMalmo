@@ -172,8 +172,8 @@ h1 {
 
 .qnum {
   font-family: 'Fraunces', serif;
-  font-size: 13px;
-  color: var(--sweden-blue);
+  font-size: 16px;
+  color: var(--sweden-yellow-dark);
   font-weight: 700;
   letter-spacing: 0.05em;
   margin-bottom: 8px;
@@ -245,6 +245,47 @@ h1 {
 .opt:focus-visible {
   outline: 2px solid var(--sweden-blue);
   outline-offset: 2px;
+}
+
+/* Haupt-Button & dezente Shortcuts */
+.opt.primary-cta {
+  background-color: var(--sweden-blue) !important;
+  color: #ffffff !important;
+  font-weight: 600;
+  padding: 14px 24px;
+  font-size: 1.05rem;
+  border: none !important;
+  box-shadow: 0 4px 12px rgba(0, 98, 155, 0.2);
+  text-align: center;
+}
+
+.opt.primary-cta:hover {
+  background-color: var(--sweden-blue-dark) !important;
+}
+
+.shortcuts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.opt.subtle-shortcut {
+  background-color: transparent !important;
+  border: 1px solid var(--sweden-yellow-dark) !important;
+  color: var(--sweden-yellow-dark) !important;
+  font-size: 0.875rem;
+  font-weight: 400;
+  padding: 10px 16px;
+  text-align: left;
+  box-shadow: none;
+  opacity: 0.85;
+}
+
+.opt.subtle-shortcut:hover {
+  opacity: 1;
+  background-color: var(--sweden-yellow-dark) !important;
+  border-color: #fff !important;
+  color: #fff !important;
 }
 
 .progress-track {
