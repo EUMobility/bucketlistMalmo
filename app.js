@@ -5,6 +5,7 @@ let preCurrencyScreen = 'results';
 let currencyMode = 'sek'; // 'sek' or a currency code like 'EUR'
 let fxRate = null;
 let fxError = false;
+let recommendationSeed = Date.now();
 
 const card = document.getElementById('card');
 
@@ -182,7 +183,7 @@ function renderIntro() {
   card.innerHTML = `
     <div class="qnum">Welcome</div>
     <div class="question">Find your next Skåne adventure</div>
-    <p class="sub" style="margin-bottom:22px;">Answer 4 quick questions about the kind of day you're after, and get a few solid picks from the Skåne bucket list — beaches, hikes, castles, food, and more — with a rough idea of what they'll cost.</p>
+    <p class="sub" style="margin-bottom:22px;">Answer 5 quick questions and get realistic ideas based on your total time, transport and budget — starting from Malmö.</p>
     <div class="options">
       <button class="opt" id="startBtn">Let's go →</button>
     </div>
@@ -196,16 +197,18 @@ function renderIntro() {
 
 function renderQuestion() {
   const total = questions.length;
-  const pct = Math.round((step / total) * 100);
+  const pct = Math.round(((step + 1) / total) * 100);
 
   const q = questions[step];
   card.innerHTML = `
     <div class="qnum">Question ${step + 1} of ${total}</div>
     <div class="question">${q.q}</div>
+    ${q.hint ? `<p class="question-hint">${q.hint}</p>` : ''}
     <div class="options">
       ${q.options.map((o) => `<button class="opt" data-value="${o.value}">${o.label}</button>`).join('')}
     </div>
     <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
+    ${step > 0 ? '<button class="quiz-back" id="quizBack">← Back</button>' : ''}
   `;
 
   card.querySelectorAll('.opt').forEach((btn) => {
@@ -220,40 +223,21 @@ function renderQuestion() {
       }
     });
   });
-}
 
-function pickCount() {
-  if (answers.time === 'short') return 1;
-  if (answers.time === 'half') return 2;
-  return 3;
+  const backButton = document.getElementById('quizBack');
+  if (backButton) {
+    backButton.addEventListener('click', () => {
+      step--;
+      renderQuestion();
+    });
+  }
 }
 
 function buildResults() {
-  const mood = answers.mood;
-  let primary = places[mood] ? [...places[mood]] : [];
-  const count = pickCount();
-
-  if (answers.budget === 'low') {
-    primary.sort(
-      (a, b) => (a.cost === 'low' ? 0 : 1) - (b.cost === 'low' ? 0 : 1)
-    );
-  }
-
-  let extra = [];
-  if (primary.length < count) {
-    extra = sights.filter((sight) => !sight.categories.includes(mood));
-    if (answers.budget === 'low') {
-      extra.sort(
-        (a, b) => (a.cost === 'low' ? 0 : 1) - (b.cost === 'low' ? 0 : 1)
-      );
-    }
-  }
-
-  let picks = primary.slice(0, count);
-  if (picks.length < count) {
-    picks = picks.concat(extra.slice(0, count - picks.length));
-  }
-  return picks;
+  return RecommendationEngine.recommend(sights, answers, {
+    count: 3,
+    seed: recommendationSeed
+  });
 }
 
 const CATEGORY_LABELS = {
@@ -267,20 +251,50 @@ const CATEGORY_LABELS = {
   daytrip: 'Day trip'
 };
 
-function resultItemHTML(p) {
+function formatMinutes(minutes) {
+  if (minutes < 60) return `${minutes} min`;
+  const hours = Math.floor(minutes / 60);
+  const remainder = minutes % 60;
+  return remainder ? `${hours} hr ${remainder} min` : `${hours} hr`;
+}
+
+function resultItemHTML(item) {
+  const rankedResult = item && item.sight;
+  const p = rankedResult ? item.sight : item;
+  const estimate = rankedResult ? item.estimate : null;
   const infoLink = p.url
-    ? `<a class="result-link" href="${p.url}" target="_blank" rel="noopener noreferrer">Official info ↗</a>`
+    ? `<a class="result-link" href="${p.url}" target="_blank" rel="noopener noreferrer">More info ↗</a>`
     : '';
   const categoryTags = p.categories
     .map((category) => `<span>${CATEGORY_LABELS[category]}</span>`)
     .join('');
+  const practicalDetails = estimate
+    ? `<div class="practical-details">
+        <span>About ${formatMinutes(estimate.totalMinutes)} total</span>
+        <span>${estimate.travelMinutes} min each way</span>
+        <span>${p.planning.destination}</span>
+      </div>`
+    : '';
+  const reason =
+    rankedResult && item.reasons.length
+      ? `<p class="match-reason">Why it fits: ${item.reasons.join(' · ')}</p>`
+      : '';
+  const warning =
+    rankedResult && item.mismatches.length
+      ? `<p class="match-warning">Closest option: ${item.mismatches.join(' and ')}.</p>`
+      : '';
+  const displayedCost = estimate ? estimate.totalCostSEK : p.avgSEK;
+  const displayedCostClass = displayedCost <= 150 ? 'low' : 'flex';
 
   return `
     <div class="result-item">
       <div class="result-tag">${p.tag}</div>
       <div class="result-body">
-        <strong>${p.name} <span class="cost-badge ${p.cost}">${formatPrice(p.avgSEK)}</span></strong>
+        <strong>${p.name} <span class="cost-badge ${displayedCostClass}">${formatPrice(displayedCost)}</span></strong>
         <span>${p.note}</span>
+        ${practicalDetails}
+        ${reason}
+        ${warning}
         <div class="category-tags">${categoryTags}</div>
         ${infoLink}
       </div>
@@ -289,27 +303,17 @@ function resultItemHTML(p) {
 }
 
 function renderResults() {
-  const picks = buildResults();
-  const moodLabel = {
-    coast: 'a day by the water',
-    nature: 'an active day outdoors',
-    culture: 'some history and old streets',
-    cities: 'a city or charming town to explore',
-    fun: 'bowling, games or a fun adventure',
-    alone: 'something enjoyable to do on your own',
-    food: 'good food and fika',
-    daytrip: 'a day trip somewhere new'
-  }[answers.mood];
-  const budgetNote =
-    answers.budget === 'low'
-      ? 'keeping costs low'
-      : 'open to spending a bit more';
+  const result = buildResults();
+  const transport = RecommendationEngine.TRANSPORT_LABELS[answers.transport];
+  const resultMessage = result.exact
+    ? `${result.totalExact} activities fit your practical limits. These are your best matches for going by ${transport}.`
+    : `Nothing fits all three practical limits exactly. These are the closest options, with each compromise clearly marked.`;
 
   card.innerHTML = `
     <div class="results">
       <h2>Your Skåne picks</h2>
-      <p class="sub">Sounds like you're after ${moodLabel}, ${budgetNote}. Here's what fits:</p>
-      ${picks.map(resultItemHTML).join('')}
+      <p class="sub">${resultMessage} Prices and travel times are approximate.</p>
+      ${result.picks.map(resultItemHTML).join('')}
       <div class="action-row">
         <button class="restart" id="restart">Start over</button>
         <button class="restart secondary" id="seeAll">See every activity</button>
@@ -400,6 +404,7 @@ function resetAll() {
   answers = {};
   step = 0;
   screen = 'quiz';
+  recommendationSeed = Date.now();
   renderQuestion();
 }
 
