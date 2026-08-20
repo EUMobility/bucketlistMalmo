@@ -258,18 +258,18 @@ function renderIntro() {
   card.innerHTML = `
     <div class="qnum">Welcome</div>
     <div class="question">Find your next Skåne adventure</div>
-    <p class="sub" style="margin-bottom:18px;">Answer quick questions or jump right in with a shortcut below.</p>
-    
-    <div class="options" style="margin-bottom:24px;">
-      <button class="opt" id="startBtn">Take Quiz →</button>
+    <p class="sub" style="margin-bottom:20px;">Answer 4 quick questions to get picks from your Skåne bucket list.</p>
+
+    <div class="options" style="margin-bottom:28px;">
+      <button class="opt primary-cta" id="startBtn">Take Quiz →</button>
     </div>
 
-    <div class="qnum">Shortcuts</div>
-    <div class="options">
-      <button class="opt secondary" id="nearbyBtn">📍 Give me something nearby</button>
-      <button class="opt secondary" id="rainBtn">🌧️ It's raining - what can I do?</button>
-      <button class="opt secondary" id="surpriseBtn">🎲 Surprise me</button>
-      <button class="opt secondary" id="allSightsBtn">📋 All sights</button>
+    <div class="qnum" style="opacity:0.6; font-size:0.75rem; margin-bottom:8px;">OR QUICK START</div>
+    <div class="shortcuts-list">
+      <button class="opt subtle-shortcut" id="nearbyBtn">Give me something nearby</button>
+      <button class="opt subtle-shortcut" id="rainBtn">It's raining - what can I do?</button>
+      <button class="opt subtle-shortcut" id="surpriseBtn">Surprise me</button>
+      <button class="opt subtle-shortcut" id="allSightsBtn">All sights</button>
     </div>
   `;
 
